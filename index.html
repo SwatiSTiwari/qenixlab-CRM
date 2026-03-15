@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voyx India - AI WhatsApp & CRM Proposal</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #1e3a8a; /* Deep Blue for formal look */
+            --accent-color: #3b82f6;
+            --text-color: #334155;
+            --heading-color: #0f172a;
+            --bg-color: #f1f5f9;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px 0;
+        }
+
+        /* Container designed to EXACTLY match A4 dimensions and scaling */
+        #document-container {
+            background-color: white;
+            width: 100%;
+            max-width: 794px; /* Exact A4 width at 96 DPI */
+            box-sizing: border-box; /* Crucial for keeping padding inside the width */
+            margin: 0 auto;
+            padding: 50px 60px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        /* Adjust padding and remove shadow when exporting to PDF to prevent clipping */
+        #document-container.pdf-export-mode {
+            box-shadow: none !important;
+            margin: 0 !important;
+            padding: 0 !important; /* Strip web padding so jsPDF margins can take over perfectly */
+            max-width: 100% !important; 
+            width: 100% !important;
+        }
+
+        /* Header containing logos */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .provider-logo-container {
+            background-color: #0f172a;
+            padding: 15px 20px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .provider-logo-container img {
+            max-height: 40px;
+            display: block;
+        }
+
+        .client-logo-container img {
+            max-height: 42px;
+            mix-blend-mode: multiply;
+        }
+        
+        .provider-info {
+            text-align: center;
+            margin-bottom: 35px;
+            font-size: 15px;
+            color: #64748b;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--heading-color);
+            margin-top: 0;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+
+        h4 {
+            color: var(--primary-color);
+            margin-bottom: 4px;
+            font-size: 15.5px;
+            margin-top: 20px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--heading-color);
+            margin-bottom: 5px;
+        }
+
+        .section-title {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 15px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 18px;
+            letter-spacing: 0.5px;
+            page-break-after: avoid; /* Prevents title from being at bottom of page alone */
+        }
+
+        p {
+            margin-bottom: 12px;
+            font-size: 14.5px;
+            text-align: justify;
+        }
+
+        ul {
+            margin-top: 5px;
+            margin-bottom: 15px;
+            padding-left: 20px;
+            font-size: 14.5px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        /* Invoice section */
+        .invoice-details {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            font-size: 14.5px;
+            background-color: #f8fafc;
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+        }
+
+        /* Invoice Table */
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            font-size: 14.5px;
+        }
+
+        .invoice-table th, .invoice-table td {
+            border: 1px solid #cbd5e1;
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        .invoice-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        .invoice-table .total-row {
+            font-weight: bold;
+            background-color: #f1f5f9;
+            font-size: 16px;
+        }
+
+        .invoice-table .amount {
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .amc-note {
+            font-size: 13px;
+            color: #475569;
+            font-style: italic;
+            text-align: right;
+            margin-top: -10px;
+            margin-bottom: 30px;
+        }
+
+        /* Legal Docs */
+        .legal-docs {
+            margin-top: 40px;
+        }
+
+        .legal-doc-img {
+            width: 100%;
+            max-height: 850px; /* Ensures it never overflows an A4 page */
+            object-fit: contain;
+            border: none;
+            box-shadow: none;
+            margin-top: 10px;
+        }
+
+        .legal-page {
+            page-break-before: always;
+            page-break-inside: avoid;
+            margin-bottom: 0;
+            padding-top: 10px; /* Slight buffer for the new page */
+        }
+
+        /* Page break utilities for PDF generation */
+        .new-page {
+            page-break-before: always;
+        }
+        
+        .avoid-break {
+            page-break-inside: avoid;
+        }
+
+        /* Floating Button */
+        .download-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: background-color 0.3s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .download-btn:hover {
+            background-color: #059669;
+        }
+        
+        .download-btn:active {
+            transform: scale(0.95);
+        }
+
+        .download-btn.loading {
+            background-color: #64748b;
+            cursor: not-allowed;
+        }
+
+        /* Hide button when printing normally via browser */
+        @media print {
+            .download-btn {
+                display: none;
+            }
+            body {
+                background-color: white;
+                padding: 0;
+            }
+            #document-container {
+                box-shadow: none;
+                padding: 0;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <button id="downloadBtn" class="download-btn" onclick="generatePDF()" data-html2pdf-ignore>
+        <svg id="btnIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        <span id="btnText">Download as PDF</span>
+    </button>
+
+    <div id="document-container">
+        
+        <!-- Header -->
+        <div class="header">
+            <div class="provider-logo-container">
+                <img src="https://raw.githubusercontent.com/Abhishekcodeking01/Personal-data/43d70f739e994c9090bebb59cc9fd773c197bbac/logo.png" alt="Qenixlabs Logo">
+            </div>
+            <div class="client-logo-container">
+                <img src="https://raw.githubusercontent.com/Abhishekcodeking01/Personal-data/4dde765f1f703236fc809586e0419ccabd9b3116/-NSAm2JFHmXl1LzaY3c3.jpg" alt="Voyx India Logo">
+            </div>
+        </div>
+
+        <h1>Voyx India - DULAR DISTRIBUTION</h1>
+        <div class="subtitle">AI-Powered WhatsApp Agent & Custom CRM System</div>
+        
+        <div class="provider-info">
+            <strong>Prepared By:</strong> Abhishek Maurya, Director of Business | Qenixlabs Private Limited
+        </div>
+
+        <!-- Executive Summary -->
+        <h2 class="section-title">Executive Summary</h2>
+        <p>This proposal outlines the development, deployment, and management of a fully integrated <strong>Smart AI Sales Agent via WhatsApp</strong> combined with a robust <strong>In-House CRM System</strong> designed specifically for Voyx India's B2B distribution business.</p>
+        <p>This system will enable Voyx India to automate lead capture, provide instant AI-driven product responses, intelligently qualify and route dealers based on location, and seamlessly manage the entire purchase and dispatch lifecycle within a custom CRM.</p>
+
+        <!-- Phase 1: Detailed AI Workflow -->
+        <h2 class="section-title">Detailed Working Flow of the AI Sales Agent (Version 1)</h2>
+        <p>The AI Sales Agent is not just a chatbot. It is designed to behave like a trained sales executive who works 24 hours a day without getting tired. Let us understand its working step by step in very simple terms.</p>
+
+        <div class="avoid-break">
+            <h4>1) Customer Sends a Message on WhatsApp</h4>
+            <p>Whenever a customer sends a message like <em>"Do you have charging cables?", "I want mobile accessories", "Send your price list",</em> or <em>"I want to become a dealer"</em>, the AI immediately replies within seconds.</p>
+            <p>It greets the customer politely and asks basic questions such as:</p>
+            <ul>
+                <li>What product are you looking for?</li>
+                <li>What is your location / Pin Code?</li>
+                <li>Are you buying for shop or personal use?</li>
+                <li>Approximate quantity required?</li>
+            </ul>
+            <p>This helps the AI understand whether the person is serious and whether they are a retailer or not.</p>
+        </div>
+
+        <div class="avoid-break">
+            <h4>2) Location & Dealer Protection Logic (Very Important for B2B)</h4>
+            <p>Since this is a distribution business, we must protect existing dealers. So after the customer gives their Pin Code, the AI checks: Is there already a registered dealer in that area? Is there any dealer within a 50 km radius? Now two situations happen:</p>
+            <ul>
+                <li><strong>Situation A (Dealer Already Exists):</strong> The AI politely informs the customer that there is an authorized dealer nearby, shares the product catalog for reference only, offers contact details of the existing dealer, and marks this lead as "Low Priority" in the CRM. This protects your dealer network and avoids internal conflict.</li>
+                <li><strong>Situation B (No Dealer in That Area):</strong> The AI treats the customer as a fresh B2B opportunity, shares the complete catalog with pricing, explains dealership benefits, asks about shop size, monthly demand, and stock capacity, and collects proper business details. This becomes a potential expansion lead.</li>
+            </ul>
+        </div>
+
+        <div class="avoid-break">
+            <h4>3) Smart Selling & Cross-Selling System</h4>
+            <p>The AI does not just answer questions. If a customer asks for a "Charging cable", the AI responds like a smart salesperson:</p>
+            <ul>
+                <li>Suggests compatible chargers</li>
+                <li>Suggests combo offers</li>
+                <li>Suggests higher margin products</li>
+                <li>Suggests bulk discounts</li>
+            </ul>
+            <p><em>Example: "Sir, along with the cable, many of our dealers also stock fast chargers and power banks for better margin. Would you like to see those options as well?"</em> This increases average order value automatically.</p>
+        </div>
+
+        <div class="avoid-break">
+            <h4>4) Lead Qualification System (Understanding Customer Seriousness)</h4>
+            <p>The AI automatically tracks how fast the customer replies, whether they ask price seriously, whether they ask about bulk quantities, and whether they negotiate. Based on behavior, the AI categorizes leads into:</p>
+            <ul>
+                <li>🔥 <strong>Hot Lead</strong> – High buying intention</li>
+                <li>🟡 <strong>Warm Lead</strong> – Interested but not final</li>
+                <li>❄️ <strong>Cold Lead</strong> – Just enquiry</li>
+            </ul>
+            <p>Hot leads are automatically notified to the sales team for faster action.</p>
+        </div>
+
+        <div class="avoid-break">
+            <h4>5) Automated Follow-Up System</h4>
+            <p>If a customer stops replying, the AI takes over follow-ups automatically:</p>
+            <ul>
+                <li>After a few hours → Gentle reminder</li>
+                <li>After 24 hours → Friendly follow-up</li>
+                <li>After 48 hours → Soft closing message</li>
+            </ul>
+            <p><em>Example: "Sir, just checking if you need any help with pricing. I can assist you anytime."</em><br>
+            If the customer is already speaking to a human, the AI stays silent and only tracks internally.</p>
+        </div>
+
+        <div class="avoid-break">
+            <h4>6) Human Handoff System</h4>
+            <p>If the customer wants a call, confirms a bulk order, starts serious negotiation, or asks something complex, the AI immediately notifies the assigned sales executive, transfers the chat, and sends a full conversation summary to the executive. This ensures a smooth transition without repeating information.</p>
+        </div>
+
+        <div class="avoid-break">
+            <h4>7) Multi-Language Communication</h4>
+            <p>If a customer messages in Hindi, the AI replies in Hindi. If a customer messages in English, the AI replies in English. This improves trust and comfort for customers from different regions.</p>
+        </div>
+
+        <div class="avoid-break">
+            <h4>8) Backend Tracking & Data Storage</h4>
+            <p>Every single conversation is stored securely in the CRM. This helps in tracking customer history, knowing past discussions, measuring response times, and checking the performance of the AI.</p>
+        </div>
+
+        <!-- Phase 1: Custom CRM -->
+        <h2 class="section-title new-page">Version 1 – Integrated In-House CRM System (Detailed Explanation)</h2>
+        <p>CRM means Customer Relationship Management. In simple words, it is a digital office where all leads, dealers, orders, and dispatch records are managed in one place. Let’s understand how it works step by step.</p>
+
+        <div class="avoid-break">
+            <h4>1) Lead Dashboard</h4>
+            <p>All new WhatsApp inquiries automatically appear in the CRM dashboard. Each lead contains the Name, Phone number, Location, Interested products, Lead type (Hot/Warm/Cold), and a Conversation summary. The sales team can see everything clearly without checking WhatsApp manually.</p>
+        </div>
+
+        <div class="avoid-break">
+            <h4>2) Lead Pipeline System</h4>
+            <p>Leads move through different stages visually: <em>New Lead → Contacted → Follow-Up → Negotiation → Closed → Converted Dealer</em>.</p>
+            <p>This helps management understand exactly how many leads are pending, how many are in negotiation, and how many got converted at a single glance.</p>
+        </div>
+
+        <div class="avoid-break">
+            <h4>3) Manual Purchase Entry</h4>
+            <p>When a deal is finalized, the employee enters the Product name, Quantity, Total amount, Dealer name, and Payment status into the CRM. This instantly creates an official purchase record.</p>
+        </div>
+
+        <div class="avoid-break">
+            <h4>4) Dispatch & Delivery Tracking</h4>
+            <p>After purchase entry, the order status moves through: <em>Processing → Packed → Dispatched → Delivered</em>.</p>
+            <p>When the status changes in the CRM, the customer automatically receives a WhatsApp update. <em>(Example: "Your order has been dispatched and will reach in 2–3 days.")</em> This drastically reduces manual calling.</p>
+        </div>
+
+        <div class="avoid-break">
+            <h4>5) Smart Re-Engagement System</h4>
+            <p>The system intelligently tracks the last purchase date. If a dealer does not reorder, the CRM automatically triggers the AI to reach out:</p>
+            <ul>
+                <li>After 15 days → Reminder message</li>
+                <li>After 20 days → Follow-up</li>
+                <li>After 30 days → Stock refill suggestion</li>
+            </ul>
+            <p>This increases repeat business completely automatically.</p>
+        </div>
+
+        <div class="avoid-break">
+            <h4>6) Employee Access System</h4>
+            <p>Up to 10 employees can log in with their ID, view their assigned leads, update statuses, and track their personal performance. Meanwhile, Management can monitor which employee closed how many deals, response times, and total revenue generated.</p>
+        </div>
+
+        <div class="avoid-break">
+            <h4>7) Reports & Basic Analytics (Version 1)</h4>
+            <p>The CRM provides essential business insights including Total leads this month, Conversion rate, Revenue summary, and the Hot vs. Cold lead ratio to help drive better business decisions.</p>
+        </div>
+
+        <!-- Future Scope -->
+        <h2 class="section-title">Version 2 – Future Expansion Scope</h2>
+        <p>The system is designed to grow into a full business ecosystem. In Version 2, the CRM and AI can be seamlessly expanded into:</p>
+        
+        <div class="avoid-break">
+            <h4>1) Automated Invoice Generation</h4>
+            <p>GST-compliant invoice creation, Auto PDF generation, Direct WhatsApp sending, and Invoice history storage.</p>
+        </div>
+        
+        <div class="avoid-break">
+            <h4>2) Quotation Generator System</h4>
+            <p>Select products from the catalog, Add margin percentages, Auto price calculation, Generate professional quotation PDFs, and Send directly to the dealer.</p>
+        </div>
+
+        <div class="avoid-break">
+            <h4>3) Inventory Management System</h4>
+            <p>Stock entry system, Automatic stock deduction on confirmed orders, Low stock alerts, and Fast moving vs. slow moving product analysis.</p>
+        </div>
+
+        <div class="avoid-break">
+            <h4>4) Auto Calling Integration</h4>
+            <p>One-click calling directly from the CRM, Call logging, Conversation notes storage, and Call history tracking.</p>
+        </div>
+
+        <div class="avoid-break">
+            <h4>5) Advanced Analytics Dashboard</h4>
+            <p>Employee performance ranking, Revenue forecasting, Product demand trends, Dealer growth mapping, and Monthly sales growth charts.</p>
+        </div>
+
+        <!-- Expected Outcomes & Timeline -->
+        <div class="avoid-break new-page">
+            <h2 class="section-title">Timeline & Expected Outcomes</h2>
+            <p><strong>Deployment Timeline:</strong></p>
+            <ul>
+                <li><strong>System Development & Deployment:</strong> 15 to 20 working days</li>
+                <li><strong>Testing & Refinement:</strong> 5 working days</li>
+            </ul>
+            <p><strong>Expected Business Impact:</strong></p>
+            <ul>
+                <li>24/7 automated sales handling and instantaneous customer replies.</li>
+                <li>Accelerated network expansion and better dealer mapping.</li>
+                <li>Increased revenue through AI-driven cross-selling and upselling.</li>
+                <li>Reduced manual manpower pressure and professionalized brand communication.</li>
+            </ul>
+        </div>
+
+        <!-- Commercial Proposal / Invoice (Kept as avoid-break so the table doesn't split in half) -->
+        <div class="avoid-break">
+            <h2 class="section-title">Commercial Proposal & Proforma Invoice</h2>
+            
+            <div class="invoice-details">
+                <div>
+                    <strong>From:</strong><br>
+                    Abhishek Maurya<br>
+                    Qenixlabs Private Limited
+                </div>
+                <div style="text-align: right;">
+                    <strong>Billed To:</strong><br>
+                    Voyx India - DULAR DISTRIBUTION<br><br>
+                    <strong>Date:</strong> <script>document.write(new Date().toLocaleDateString('en-IN', {day: 'numeric', month: 'long', year: 'numeric'}))</script>
+                </div>
+            </div>
+
+            <table class="invoice-table">
+                <thead>
+                    <tr>
+                        <th>Description of Services</th>
+                        <th style="width: 25%; text-align: right;">Amount (INR)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>AI WhatsApp Agent Setup & Integration</strong><br>
+                            <span style="font-size: 13px; color: #64748b;">Includes Catalog Automation, Dealer Radius Logic, Lead Qualification, Upselling Engine, Multi-language setup, and Automated Follow-ups.</span>
+                        </td>
+                        <td class="amount">Included</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Integrated In-House CRM System (Version 1)</strong><br>
+                            <span style="font-size: 13px; color: #64748b;">Includes Lead Pipeline Management, Purchase & Dispatch Tracking, 10 Employee Accounts, and Smart Re-engagement triggers.</span>
+                        </td>
+                        <td class="amount">Included</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td>Total Implementation Cost</td>
+                        <td class="amount">₹2,30,000</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="amc-note">
+                * Note: Annual Maintenance Cost (AMC) of ₹46,000/year (20% of project value) applies from Year 2 onwards for continuous server maintenance, AI optimization, and tech support.
+            </div>
+        </div>
+
+        <!-- Legal Attachments -->
+        <div class="legal-docs">
+
+            <!-- Company PAN -->
+            <div class="legal-page">
+                <h2 class="section-title">Legal Attachment – Company e-PAN</h2>
+                <div style="text-align:center;">
+                    <img src="https://raw.githubusercontent.com/Abhishekcodeking01/Personal-data/43d70f739e994c9090bebb59cc9fd773c197bbac/Screenshot%202026-02-28%20155615.png" 
+                         alt="Company PAN" 
+                         class="legal-doc-img">
+                </div>
+            </div>
+
+            <!-- Company TAN -->
+            <div class="legal-page">
+                <h2 class="section-title">Legal Attachment – Company TAN</h2>
+                <div style="text-align:center;">
+                    <img src="https://raw.githubusercontent.com/Abhishekcodeking01/Personal-data/43d70f739e994c9090bebb59cc9fd773c197bbac/Screenshot%202026-02-28%20160245.png" 
+                         alt="Company TAN" 
+                         class="legal-doc-img">
+                </div>
+            </div>
+
+            <!-- Incorporation Certificate -->
+            <div class="legal-page">
+                <h2 class="section-title">Legal Attachment – Certificate of Incorporation</h2>
+                <div style="text-align:center;">
+                    <img src="https://raw.githubusercontent.com/Abhishekcodeking01/Personal-data/43d70f739e994c9090bebb59cc9fd773c197bbac/Screenshot%202026-02-28%20155640.png" 
+                         alt="Certificate of Incorporation" 
+                         class="legal-doc-img">
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        function generatePDF() {
+            const element = document.getElementById('document-container');
+            const btn = document.getElementById('downloadBtn');
+            const btnText = document.getElementById('btnText');
+            
+            // Visual feedback
+            btn.classList.add('loading');
+            btnText.innerText = "Generating PDF...";
+            
+            // Apply safe padding right before export
+            element.classList.add('pdf-export-mode');
+            
+            // Let html2pdf handle standard A4 margins in millimeters
+            const opt = {
+                margin:       [15, 15, 15, 15], // 15mm margins on all sides
+                filename:     'Voyx_India_AI_CRM_Proposal.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, scrollY: 0 }, // scrollY: 0 prevents alignment offset if user scrolled down
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: ['css', 'legacy'] } 
+            };
+
+            // Generate, save, and then remove the export class
+            html2pdf().set(opt).from(element).save().then(() => {
+                element.classList.remove('pdf-export-mode');
+                
+                // Restore button
+                btn.classList.remove('loading');
+                btnText.innerText = "Download as PDF";
+            }).catch(err => {
+                console.error("PDF Generation Error: ", err);
+                element.classList.remove('pdf-export-mode');
+                btn.classList.remove('loading');
+                btnText.innerText = "Download Failed (Try Again)";
+            });
+        }
+    </script>
+</body>
+</html>
